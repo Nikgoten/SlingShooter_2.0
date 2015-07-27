@@ -13,7 +13,7 @@ public class CollisionKlotz : MonoBehaviour {
 
 		if (transform) {
 			
-			GameController.KlotzDestroyed();
+			//GameController.KlotzDestroyed();
 		}
 	}
 }

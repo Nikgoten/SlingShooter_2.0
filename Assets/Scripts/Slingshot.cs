@@ -48,6 +48,9 @@ public class Slingshot : MonoBehaviour {
 		projectile.transform.position = launchPos;
 		arrow.transform.position = launchPos;
 
+		//Give the projectile a launchPos transform
+		//projectile.GetComponent<ProjectileRotation> ().launchPos = launchPos;
+
 
 		// Set it to kinematic for now
 		projectile.GetComponent<Rigidbody>().isKinematic = true;
@@ -66,16 +69,19 @@ public class Slingshot : MonoBehaviour {
 
 		// Find the delta from launch position to 3D mouse position
 		Vector3 mouseDelta = mousePos3D - launchPos;
-
 		// Limit mouseDelta to the radius of the Slingshot SphereCollider
 		float maxMagnitude = GetComponent<SphereCollider>().radius;
 		mouseDelta = Vector3.ClampMagnitude(mouseDelta, maxMagnitude);
 
 		// Now move the projectile to this new position
 		projectile.transform.position = launchPos + mouseDelta;
-		arrow.transform.position = launchPos + mouseDelta;
+		arrow.transform.position = projectile.transform.position;
 
-		
+		arrow.transform.rotation = Quaternion.LookRotation (-mouseDelta * velocityMult);
+		arrow.transform.Rotate (0, -90, 0);
+		//arrow.transform.rotation = Quaternion.LookRotation (newMouseDelta);
+		//Debug.Log (arrow.transform.rotation.eulerAngles);
+
 		if(Input.GetMouseButtonUp(0)) {
 			// The mouse has been released
 			aimingMode = false;
@@ -83,6 +89,7 @@ public class Slingshot : MonoBehaviour {
 			// Fire off the projectile with given velocity
 			projectile.GetComponent<Rigidbody>().isKinematic = false;
 			projectile.GetComponent<Rigidbody>().velocity = -mouseDelta * velocityMult;
+			Debug.Log("Velocity: " + -mouseDelta * velocityMult);
 
 			// Set the Followcam's target to our projectile
 			FollowCamera.S.poi = projectile;
@@ -94,5 +101,9 @@ public class Slingshot : MonoBehaviour {
 			GameController.ShotFired();
 		}
 		
+	}
+
+	private float Remap (float value, float from1, float to1, float from2, float to2) {
+		return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
 	}
 }
